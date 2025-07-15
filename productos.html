@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLTECSA - Productos y Distribuidores</title>
+    <style>
+        :root {
+            --primary-dark: #1a237e;
+            --primary: #303f9f;
+            --primary-light: #7986cb;
+            --accent: #ffab00;
+            --danger: #d32f2f;
+            --text-light: #f5f5f5;
+            --text-dark: #212121;
+            --background: #e8eaf6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--text-light);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: electric 3s infinite;
+        }
+        
+        @keyframes electric {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        nav {
+            background-color: var(--primary);
+            padding: 0.8rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        nav li { margin: 0 15px; }
+        
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .admin-btn {
+            background-color: var(--accent);
+            color: var(--text-dark);
+            font-weight: bold;
+        }
+        
+        section {
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 1200px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .card {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: white;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .card h3 {
+            color: var(--primary-dark);
+            margin-top: 0;
+        }
+        
+        .card .price {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .card img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .action-btn {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+        
+        .action-btn:hover { transform: scale(1.1); }
+        
+        .delete-btn {
+            background-color: var(--danger);
+            top: 10px;
+            right: 10px;
+            display: none;
+        }
+        
+        .edit-btn {
+            background-color: var(--primary-light);
+            bottom: 10px;
+            right: 10px;
+            display: none;
+        }
+        
+        body.admin-mode .action-btn {
+            display: flex;
+        }
+        
+        .form-container {
+            background-color: #f5f5f5;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+        
+        body.admin-mode .form-container {
+            display: block;
+        }
+        
+        .form-container input, 
+        .form-container textarea,
+        .form-container select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .save-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .cancel-btn {
+            background-color: white;
+            border: 2px solid #ddd;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 150px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--text-light);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SOLTECSA</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="productos.html">Productos</a></li>
+            <li><a href="index.html#contacto">Contáctanos</a></li>
+            <li><a href="#" id="admin-login-btn" class="admin-btn">Modo Admin</a></li>
+        </ul>
+    </nav>
+    
+    <main>
+        <!-- Sección de Distribuidores -->
+        <section id="distribuidores">
+            <h2>Nuestros Distribuidores</h2>
+            
+            <div id="distribuidor-form" class="form-container">
+                <h3 id="distribuidor-form-title">Agregar Distribuidor</h3>
+                <input type="text" id="distribuidor-name" placeholder="Nombre del distribuidor" required>
+                <textarea id="distribuidor-desc" placeholder="Descripción"></textarea>
+                <div class="form-buttons">
+                    <button type="button" id="cancel-distribuidor" class="cancel-btn">Cancelar</button>
+                    <button type="button" id="submit-distribuidor" class="save-btn">Guardar</button>
+                </div>
+            </div>
+            
+            <div class="grid-container" id="distribuidores-container">
+                <!-- Distribuidores se cargarán aquí -->
+            </div>
+        </section>
+        
+        <!-- Sección de Productos -->
+        <section id="productos">
+            <h2>Nuestros Productos</h2>
+            
+            <div id="producto-form" class="form-container">
+                <h3 id="producto-form-title">Agregar Producto</h3>
+                <input type="text" id="producto-name" placeholder="Nombre del producto" required>
+                <input type="number" id="producto-price" placeholder="Precio (opcional)" step="0.01">
+                <textarea id="producto-desc" placeholder="Descripción"></textarea>
+                <input type="file" id="producto-image" accept="image/*">
+                <img id="producto-image-preview" class="image-preview" alt="Vista previa de imagen">
+                <div class="form-buttons">
+                    <button type="button" id="cancel-producto" class="cancel-btn">Cancelar</button>
+                    <button type="button" id="submit-producto" class="save-btn">Guardar</button>
+                </div>
+            </div>
+            
+            <div class="grid-container" id="productos-container">
+                <!-- Productos se cargarán aquí -->
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; <span id="current-year"></span> SOLTECSA. Todos los derechos reservados.</p>
+    </footer>
+    
+    <script>
+        // Datos y configuración
+        const ADMIN_PASSWORD = "soltecsa2015";
+        let isAdmin = false;
+        let currentEditingId = null;
+        let editingType = null; // 'producto' o 'distribuidor'
+        
+        // Elementos del DOM
+        const adminLoginBtn = document.getElementById('admin-login-btn');
+        const distribuidorForm = document.getElementById('distribuidor-form');
+        const productoForm = document.getElementById('producto-form');
+        const distribuidoresContainer = document.getElementById('distribuidores-container');
+        const productosContainer = document.getElementById('productos-container');
+        const imageInput = document.getElementById('producto-image');
+        const imagePreview = document.getElementById('producto-image-preview');
+        
+        // Año actual
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            checkAdminSession();
+            
+            // Configurar el input de imagen
+            imageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        imagePreview.src = event.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+        
+        // Manejo de sesión admin
+        adminLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            isAdmin ? logoutAdmin() : showAdminLogin();
+        });
+        
+        function checkAdminSession() {
+            if(localStorage.getItem('soltecsa_admin') === 'true') {
+                loginAdmin();
+            }
+        }
+        
+        function showAdminLogin() {
+            const password = prompt('Ingrese la contraseña de administrador:');
+            if(password === ADMIN_PASSWORD) {
+                loginAdmin();
+            } else if(password !== null) {
+                alert('Contraseña incorrecta');
+            }
+        }
+        
+        function loginAdmin() {
+            isAdmin = true;
+            localStorage.setItem('soltecsa_admin', 'true');
+            adminLoginBtn.textContent = 'Cerrar Sesión';
+            document.body.classList.add('admin-mode');
+        }
+        
+        function logoutAdmin() {
+            isAdmin = false;
+            localStorage.removeItem('soltecsa_admin');
+            adminLoginBtn.textContent = 'Modo Admin';
+            document.body.classList.remove('admin-mode');
+            cancelEdit();
+        }
+        
+        // Cargar datos
+        function loadData() {
+            loadDistribuidores();
+            loadProductos();
+        }
+        
+        function loadDistribuidores() {
+            const saved = localStorage.getItem('soltecsa_distribuidores');
+            const distribuidores = saved ? JSON.parse(saved) : [
+                { id: 1, name: "Distribuidor Ejemplo", desc: "Nuestro principal socio comercial" }
+            ];
+            
+            distribuidoresContainer.innerHTML = '';
+            distribuidores.forEach(d => createDistribuidorCard(d));
+        }
+        
+        function loadProductos() {
+            const saved = localStorage.getItem('soltecsa_productos');
+            const productos = saved ? JSON.parse(saved) : [
+                { id: 1, name: "Cable THW 10mm", price: 15.99, desc: "Cable para instalaciones eléctricas", image: "" },
+                { id: 2, name: "Interruptor Siemens", price: 8.50, desc: "Interruptor de alta calidad", image: "" }
+            ];
+            
+            productosContainer.innerHTML = '';
+            productos.forEach(p => createProductoCard(p));
+        }
+        
+        // Crear elementos
+        function createDistribuidorCard(distribuidor) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.id = distribuidor.id;
+            
+            card.innerHTML = `
+                <h3>${distribuidor.name}</h3>
+                ${distribuidor.desc ? `<p>${distribuidor.desc}</p>` : ''}
+                <button class="action-btn delete-btn">×</button>
+                <button class="action-btn edit-btn">✎</button>
+            `;
+            
+            card.querySelector('.delete-btn').addEventListener('click', () => deleteItem('distribuidor', distribuidor.id));
+            card.querySelector('.edit-btn').addEventListener('click', () => editItem('distribuidor', distribuidor.id));
+            
+            distribuidoresContainer.appendChild(card);
+        }
+        
+        function createProductoCard(producto) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.id = producto.id;
+            
+            card.innerHTML = `
+                ${producto.image ? `<img src="${producto.image}" alt="${producto.name}">` : ''}
+                <h3>${producto.name}</h3>
+                ${producto.price ? `<p class="price">$${producto.price.toFixed(2)}</p>` : ''}
+                ${producto.desc ? `<p>${producto.desc}</p>` : ''}
+                <button class="action-btn delete-btn">×</button>
+                <button class="action-btn edit-btn">✎</button>
+            `;
+            
+            card.querySelector('.delete-btn').addEventListener('click', () => deleteItem('producto', producto.id));
+            card.querySelector('.edit-btn').addEventListener('click', () => editItem('producto', producto.id));
+            
+            productosContainer.appendChild(card);
+        }
+        
+        // Manejo de formularios
+        document.getElementById('submit-distribuidor').addEventListener('click', () => handleSubmit('distribuidor'));
+        document.getElementById('submit-producto').addEventListener('click', () => handleSubmit('producto'));
+        document.getElementById('cancel-distribuidor').addEventListener('click', cancelEdit);
+        document.getElementById('cancel-producto').addEventListener('click', cancelEdit);
+        
+        function handleSubmit(type) {
+            const nameInput = document.getElementById(`${type}-name`);
+            const descInput = document.getElementById(`${type}-desc`);
+            const priceInput = type === 'producto' ? document.getElementById(`${type}-price`) : null;
+            
+            const name = nameInput.value.trim();
+            const desc = descInput.value.trim();
+            const price = priceInput ? parseFloat(priceInput.value) : null;
+            const image = type === 'producto' ? imagePreview.src : null;
+            
+            if(!name) {
+                alert('El nombre es requerido');
+                return;
+            }
+            
+            if(currentEditingId) {
+                updateItem(type, currentEditingId, name, desc, price, image);
+            } else {
+                addItem(type, name, desc, price, image);
+            }
+            
+            saveData(type);
+            cancelEdit();
+        }
+        
+        function addItem(type, name, desc, price, image) {
+            const newItem = {
+                id: Date.now(),
+                name,
+                desc,
+                ...(type === 'producto' && { price, image })
+            };
+            
+            if(type === 'distribuidor') {
+                createDistribuidorCard(newItem);
+                // Guardar inmediatamente el nuevo distribuidor
+                saveDistribuidores();
+            } else {
+                createProductoCard(newItem);
+                // Guardar inmediatamente el nuevo producto
+                saveProductos();
+            }
+        }
+        
+        function updateItem(type, id, name, desc, price, image) {
+            const container = type === 'distribuidor' ? distribuidoresContainer : productosContainer;
+            const card = container.querySelector(`[data-id="${id}"]`);
+            
+            if(card) {
+                card.querySelector('h3').textContent = name;
+                
+                if(type === 'producto') {
+                    // Actualizar precio
+                    const priceElement = card.querySelector('.price');
+                    if(price) {
+                        if(priceElement) {
+                            priceElement.textContent = `$${price.toFixed(2)}`;
+                        } else {
+                            const newPrice = document.createElement('p');
+                            newPrice.className = 'price';
+                            newPrice.textContent = `$${price.toFixed(2)}`;
+                            card.querySelector('h3').after(newPrice);
+                        }
+                    } else if(priceElement) {
+                        priceElement.remove();
+                    }
+                    
+                    // Actualizar imagen
+                    let imgElement = card.querySelector('img');
+                    if(image) {
+                        if(imgElement) {
+                            imgElement.src = image;
+                        } else {
+                            imgElement = document.createElement('img');
+                            imgElement.src = image;
+                            imgElement.alt = name;
+                            card.prepend(imgElement);
+                        }
+                    } else if(imgElement) {
+                        imgElement.remove();
+                    }
+                }
+                
+                // Actualizar descripción
+                const descElements = card.querySelectorAll('p:not(.price)');
+                const descElement = descElements.length > 0 ? descElements[0] : null;
+                
+                if(desc) {
+                    if(descElement) {
+                        descElement.textContent = desc;
+                    } else {
+                        const newDesc = document.createElement('p');
+                        newDesc.textContent = desc;
+                        const insertAfter = type === 'producto' ? 
+                            (card.querySelector('.price') || card.querySelector('h3')) : 
+                            card.querySelector('h3');
+                        insertAfter.after(newDesc);
+                    }
+                } else if(descElement) {
+                    descElement.remove();
+                }
+            }
+            
+            // Guardar cambios inmediatamente
+            if(type === 'distribuidor') {
+                saveDistribuidores();
+            } else {
+                saveProductos();
+            }
+        }
+        
+        function editItem(type, id) {
+            editingType = type;
+            currentEditingId = id;
+            
+            const container = type === 'distribuidor' ? distribuidoresContainer : productosContainer;
+            const card = container.querySelector(`[data-id="${id}"]`);
+            
+            const formTitle = document.getElementById(`${type}-form-title`);
+            const nameInput = document.getElementById(`${type}-name`);
+            const descInput = document.getElementById(`${type}-desc`);
+            const priceInput = type === 'producto' ? document.getElementById(`${type}-price`) : null;
+            
+            formTitle.textContent = `Editar ${type === 'distribuidor' ? 'Distribuidor' : 'Producto'}`;
+            nameInput.value = card.querySelector('h3').textContent;
+            
+            const descElements = card.querySelectorAll('p:not(.price)');
+            const descElement = descElements.length > 0 ? descElements[0] : null;
+            descInput.value = descElement ? descElement.textContent : '';
+            
+            if(priceInput) {
+                const priceElement = card.querySelector('.price');
+                priceInput.value = priceElement ? priceElement.textContent.replace('$', '') : '';
+            }
+            
+            if(type === 'producto') {
+                const imgElement = card.querySelector('img');
+                if(imgElement && imgElement.src) {
+                    imagePreview.src = imgElement.src;
+                    imagePreview.style.display = 'block';
+                } else {
+                    imagePreview.style.display = 'none';
+                }
+                imageInput.value = '';
+            }
+            
+            document.getElementById(`${type}-form`).scrollIntoView({ behavior: 'smooth' });
+            nameInput.focus();
+        }
+        
+        function deleteItem(type, id) {
+            if(confirm(`¿Estás seguro de eliminar este ${type === 'distribuidor' ? 'distribuidor' : 'producto'}?`)) {
+                const container = type === 'distribuidor' ? distribuidoresContainer : productosContainer;
+                const card = container.querySelector(`[data-id="${id}"]`);
+                
+                if(card) {
+                    card.remove();
+                    
+                    // Guardar cambios inmediatamente
+                    if(type === 'distribuidor') {
+                        saveDistribuidores();
+                    } else {
+                        saveProductos();
+                    }
+                    
+                    if(currentEditingId === id) {
+                        cancelEdit();
+                    }
+                }
+            }
+        }
+        
+        function cancelEdit() {
+            currentEditingId = null;
+            editingType = null;
+            
+            ['distribuidor', 'producto'].forEach(type => {
+                const form = document.getElementById(`${type}-form`);
+                const nameInput = document.getElementById(`${type}-name`);
+                const descInput = document.getElementById(`${type}-desc`);
+                const priceInput = type === 'producto' ? document.getElementById(`${type}-price`) : null;
+                
+                document.getElementById(`${type}-form-title`).textContent = `Agregar ${type === 'distribuidor' ? 'Distribuidor' : 'Producto'}`;
+                nameInput.value = '';
+                descInput.value = '';
+                if(priceInput) priceInput.value = '';
+            });
+            
+            imageInput.value = '';
+            imagePreview.style.display = 'none';
+            imagePreview.src = '';
+        }
+        
+        // Funciones específicas para guardar cada tipo de dato
+        function saveDistribuidores() {
+            const distribuidores = [];
+            distribuidoresContainer.querySelectorAll('.card').forEach(card => {
+                distribuidores.push({
+                    id: parseInt(card.dataset.id),
+                    name: card.querySelector('h3').textContent,
+                    desc: card.querySelector('p')?.textContent || ''
+                });
+            });
+            localStorage.setItem('soltecsa_distribuidores', JSON.stringify(distribuidores));
+        }
+        
+        function saveProductos() {
+            const productos = [];
+            productosContainer.querySelectorAll('.card').forEach(card => {
+                productos.push({
+                    id: parseInt(card.dataset.id),
+                    name: card.querySelector('h3').textContent,
+                    price: card.querySelector('.price') ? parseFloat(card.querySelector('.price').textContent.replace('$', '')) : null,
+                    desc: card.querySelector('p:not(.price)')?.textContent || '',
+                    image: card.querySelector('img')?.src || ''
+                });
+            });
+            localStorage.setItem('soltecsa_productos', JSON.stringify(productos));
+        }
+        
+        // Función genérica saveData ahora usa las específicas
+        function saveData(type) {
+            if(type === 'distribuidor') {
+                saveDistribuidores();
+            } else {
+                saveProductos();
+            }
+        }
+    </script>
+</body>
+</html>

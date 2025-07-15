@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLTECSA - Inicio</title>
+    <style>
+        :root {
+            --primary-dark: #1a237e;
+            --primary: #303f9f;
+            --primary-light: #7986cb;
+            --accent: #ffab00;
+            --danger: #d32f2f;
+            --text-light: #f5f5f5;
+            --text-dark: #212121;
+            --background: #e8eaf6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background);
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--text-light);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: electric 3s infinite;
+        }
+        
+        @keyframes electric {
+            0% {
+                left: -100%;
+            }
+            20% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+        
+        nav {
+            background-color: var(--primary);
+            padding: 0.8rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        nav li {
+            margin: 0 15px;
+        }
+        
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .admin-btn {
+            background-color: var(--accent);
+            color: var(--text-dark);
+            font-weight: bold;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--text-light);
+            padding: 4rem 2rem;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+        
+        .hero-text {
+            flex: 1;
+        }
+        
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid var(--accent);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .hero-features {
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature span {
+            color: var(--accent);
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--accent);
+            color: var(--text-dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .cta-button:hover {
+            background-color: #ffc107;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        section {
+            padding: 40px 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+        
+        #contacto {
+            background-color: white;
+            border-radius: 8px;
+            margin: 40px auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        
+        #contacto h2 {
+            color: var(--primary-dark);
+        }
+        
+        #contacto p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: var(--text-light);
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 40px;
+        }
+        
+        footer p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>SOLTECSA</h1>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="productos.html">Productos</a></li>
+            <li><a href="#contacto">Contáctanos</a></li>
+            <li><a href="#" id="admin-login-btn" class="admin-btn">Modo Admin</a></li>
+        </ul>
+    </nav>
+    
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>SOLTECSA</h1>
+                <h2>Distribuidores Autorizados de Materiales Eléctricos y de Ferretería</h2>
+                <p class="tagline">Más de 15 años iluminando tus proyectos con calidad y confianza</p>
+                <div class="hero-features">
+                    <div class="feature">
+                        <span>✓</span> Garantía de calidad certificada
+                    </div>
+                    <div class="feature">
+                        <span>✓</span> Asesoría técnica especializada
+                    </div>
+                    <div class="feature">
+                        <span>✓</span> Entrega en toda la región
+                    </div>
+                    <div class="feature">
+                        <span>✓</span> Crédito 30 días
+                    </div>
+                </div>
+                <a href="productos.html" class="cta-button">Ver Catálogo</a>
+            </div>
+            <div class="hero-image">
+                <img src="img/hero-electricidad.jpg" alt="Instalaciones eléctricas profesionales">
+            </div>
+        </div>
+    </section>
+    
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <p>Celular: 0986555504</p>
+        <p>Email: ventas2@soltecsa.com.ec</p>
+        <p>Dirección: Av. via Daule Guayaquil</p>
+    </section>
+    
+    <footer>
+        <p>&copy; <span id="current-year"></span> SOLTECSA. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Año actual en el footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+        
+        // Verificar si hay sesión de admin activa
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedAdmin = localStorage.getItem('soltecsa_admin');
+            const adminLoginBtn = document.getElementById('admin-login-btn');
+            
+            if(savedAdmin === 'true') {
+                adminLoginBtn.textContent = 'Cerrar Sesión';
+            }
+            
+            // Manejar el click en Modo Admin
+            adminLoginBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if(savedAdmin === 'true') {
+                    localStorage.removeItem('soltecsa_admin');
+                    adminLoginBtn.textContent = 'Modo Admin';
+                    alert('Sesión de administrador cerrada');
+                } else {
+                    const password = prompt('Ingrese la contraseña de administrador:');
+                    if(password === "soltecsa2015") {
+                        localStorage.setItem('soltecsa_admin', 'true');
+                        adminLoginBtn.textContent = 'Cerrar Sesión';
+                        alert('Bienvenido al modo administrador');
+                    } else if(password !== null) {
+                        alert('Contraseña incorrecta');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
