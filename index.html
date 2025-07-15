@@ -206,6 +206,7 @@
             margin: 40px auto;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             text-align: center;
+            position: relative;
         }
         
         #contacto h2 {
@@ -215,6 +216,13 @@
         #contacto p {
             font-size: 1.2rem;
             margin: 10px 0;
+        }
+        
+        .contact-image {
+            max-width: 300px;
+            margin: 20px auto;
+            border-radius: 8px;
+            display: block;
         }
         
         footer {
@@ -227,6 +235,96 @@
         
         footer p {
             margin: 0;
+        }
+        
+        /* Estilos para el modo administrador */
+        .action-btn {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .edit-btn {
+            background-color: var(--primary-light);
+            top: 10px;
+            right: 10px;
+            display: none;
+        }
+        
+        body.admin-mode .action-btn {
+            display: flex;
+        }
+        
+        .form-container {
+            background-color: #f5f5f5;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border: 1px solid #e0e0e0;
+            display: none;
+        }
+        
+        body.admin-mode .form-container {
+            display: block;
+        }
+        
+        .form-container input, 
+        .form-container textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .save-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .cancel-btn {
+            background-color: white;
+            border: 2px solid #ddd;
+        }
+        
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 10px 0;
+            display: none;
+        }
+        
+        .contact-form-container {
+            max-width: 600px;
+            margin: 0 auto;
         }
     </style>
 </head>
@@ -273,10 +371,27 @@
     </section>
     
     <section id="contacto">
+        <button class="action-btn edit-btn" id="edit-contact-btn">✎</button>
         <h2>Contacto</h2>
-        <p>Celular: 0986555504</p>
-        <p>Email: ventas2@soltecsa.com.ec</p>
-        <p>Dirección: Av. via Daule Guayaquil</p>
+        <div id="contact-content">
+            <p id="contact-phone">Celular: 0986555504</p>
+            <p id="contact-email">Email: ventas2@soltecsa.com.ec</p>
+            <p id="contact-address">Dirección: Av. via Daule Guayaquil</p>
+            <img id="contact-image" class="contact-image" src="" alt="Imagen de contacto">
+        </div>
+        
+        <div id="contact-form" class="form-container contact-form-container">
+            <h3>Editar Información de Contacto</h3>
+            <input type="text" id="contact-phone-input" placeholder="Número de teléfono">
+            <input type="email" id="contact-email-input" placeholder="Correo electrónico">
+            <input type="text" id="contact-address-input" placeholder="Dirección">
+            <input type="file" id="contact-image-input" accept="image/*">
+            <img id="contact-image-preview" class="image-preview" alt="Vista previa de imagen">
+            <div class="form-buttons">
+                <button type="button" id="cancel-contact" class="cancel-btn">Cancelar</button>
+                <button type="button" id="save-contact" class="save-btn">Guardar</button>
+            </div>
+        </div>
     </section>
     
     <footer>
@@ -294,7 +409,11 @@
             
             if(savedAdmin === 'true') {
                 adminLoginBtn.textContent = 'Cerrar Sesión';
+                document.body.classList.add('admin-mode');
             }
+            
+            // Cargar datos de contacto guardados
+            loadContactData();
             
             // Manejar el click en Modo Admin
             adminLoginBtn.addEventListener('click', function(e) {
@@ -303,19 +422,134 @@
                 if(savedAdmin === 'true') {
                     localStorage.removeItem('soltecsa_admin');
                     adminLoginBtn.textContent = 'Modo Admin';
+                    document.body.classList.remove('admin-mode');
                     alert('Sesión de administrador cerrada');
                 } else {
                     const password = prompt('Ingrese la contraseña de administrador:');
                     if(password === "soltecsa2015") {
                         localStorage.setItem('soltecsa_admin', 'true');
                         adminLoginBtn.textContent = 'Cerrar Sesión';
+                        document.body.classList.add('admin-mode');
                         alert('Bienvenido al modo administrador');
                     } else if(password !== null) {
                         alert('Contraseña incorrecta');
                     }
                 }
             });
+            
+            // Manejar edición de contacto
+            document.getElementById('edit-contact-btn').addEventListener('click', function() {
+                showContactForm();
+            });
+            
+            // Manejar guardar contacto
+            document.getElementById('save-contact').addEventListener('click', function() {
+                saveContactData();
+            });
+            
+            // Manejar cancelar edición de contacto
+            document.getElementById('cancel-contact').addEventListener('click', function() {
+                hideContactForm();
+            });
+            
+            // Manejar vista previa de imagen
+            document.getElementById('contact-image-input').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('contact-image-preview').src = event.target.result;
+                        document.getElementById('contact-image-preview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         });
+        
+        function loadContactData() {
+            const savedContact = localStorage.getItem('soltecsa_contact');
+            if(savedContact) {
+                const contactData = JSON.parse(savedContact);
+                
+                if(contactData.phone) {
+                    document.getElementById('contact-phone').textContent = `Celular: ${contactData.phone}`;
+                    document.getElementById('contact-phone-input').value = contactData.phone;
+                }
+                
+                if(contactData.email) {
+                    document.getElementById('contact-email').textContent = `Email: ${contactData.email}`;
+                    document.getElementById('contact-email-input').value = contactData.email;
+                }
+                
+                if(contactData.address) {
+                    document.getElementById('contact-address').textContent = `Dirección: ${contactData.address}`;
+                    document.getElementById('contact-address-input').value = contactData.address;
+                }
+                
+                if(contactData.image) {
+                    document.getElementById('contact-image').src = contactData.image;
+                    document.getElementById('contact-image').style.display = 'block';
+                } else {
+                    document.getElementById('contact-image').style.display = 'none';
+                }
+            }
+        }
+        
+        function showContactForm() {
+            // Llenar el formulario con los datos actuales
+            const phoneText = document.getElementById('contact-phone').textContent.replace('Celular: ', '');
+            const emailText = document.getElementById('contact-email').textContent.replace('Email: ', '');
+            const addressText = document.getElementById('contact-address').textContent.replace('Dirección: ', '');
+            
+            document.getElementById('contact-phone-input').value = phoneText;
+            document.getElementById('contact-email-input').value = emailText;
+            document.getElementById('contact-address-input').value = addressText;
+            
+            // Mostrar el formulario
+            document.getElementById('contact-form').style.display = 'block';
+            document.getElementById('contact-content').style.display = 'none';
+        }
+        
+        function hideContactForm() {
+            document.getElementById('contact-form').style.display = 'none';
+            document.getElementById('contact-content').style.display = 'block';
+            document.getElementById('contact-image-input').value = '';
+            document.getElementById('contact-image-preview').style.display = 'none';
+        }
+        
+        function saveContactData() {
+            const phone = document.getElementById('contact-phone-input').value.trim();
+            const email = document.getElementById('contact-email-input').value.trim();
+            const address = document.getElementById('contact-address-input').value.trim();
+            const image = document.getElementById('contact-image-preview').src;
+            
+            // Actualizar la visualización
+            document.getElementById('contact-phone').textContent = phone ? `Celular: ${phone}` : '';
+            document.getElementById('contact-email').textContent = email ? `Email: ${email}` : '';
+            document.getElementById('contact-address').textContent = address ? `Dirección: ${address}` : '';
+            
+            if(image && image !== '') {
+                document.getElementById('contact-image').src = image;
+                document.getElementById('contact-image').style.display = 'block';
+            } else {
+                document.getElementById('contact-image').style.display = 'none';
+            }
+            
+            // Guardar en localStorage
+            const contactData = {
+                phone,
+                email,
+                address,
+                image: image !== '' ? image : null
+            };
+            
+            localStorage.setItem('soltecsa_contact', JSON.stringify(contactData));
+            
+            // Ocultar el formulario
+            hideContactForm();
+            
+            alert('Información de contacto actualizada correctamente');
+        }
     </script>
 </body>
 </html>
